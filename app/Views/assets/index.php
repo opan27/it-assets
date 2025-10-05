@@ -2,147 +2,186 @@
 <?= $this->section('content') ?>
 
 <div class="max-w-7xl mx-auto px-4 py-6">
+    <!-- Title -->
     <h2 class="text-2xl font-bold mb-6 text-gray-800">Manajemen Assets</h2>
 
-    <!-- Form Tambah -->
-    <form action="<?= base_url('assets/store') ?>" method="post" class="mb-8 bg-white shadow-md rounded-xl p-6">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Nama Item -->
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Nama Item</label>
-                <input type="text" name="nama_item" 
-                       class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500" 
-                       placeholder="Nama Item" required>
-            </div>
-            <!-- No Assets -->
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">No Assets</label>
-                <input type="text" name="kode_asset" 
-                       class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500" 
-                       placeholder="No Assets">
-            </div>
-            <!-- No GA -->
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">No GA</label>
-                <input type="text" name="kode_ga" 
-                       class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500" 
-                       placeholder="No GA">
-            </div>
-            <!-- Spesifikasi -->
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Spesifikasi</label>
-                <input type="text" name="spesifikasi" 
-                       class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500" 
-                       placeholder="Spesifikasi">
-            </div>
-            <!-- Dropdown Kategori -->
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
-                <select name="kategori_id" 
-                        class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500" required>
-                    <option value="">-- Pilih Kategori --</option>
-                    <?php foreach($kategori as $k): ?>
-                        <option value="<?= $k['id'] ?>"><?= $k['jenis'] ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-            <!-- Dropdown Kondisi -->
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Kondisi</label>
-                <select name="kondisi_id" 
-                        class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500" required>
-                    <option value="">-- Pilih Kondisi --</option>
-                    <?php foreach($kondisi as $k): ?>
-                        <option value="<?= $k['id'] ?>"><?= $k['kondisi'] ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-        </div>
-        <!-- Tombol Submit -->
-        <div class="mt-6 flex justify-end">
-            <button type="submit" 
-                    class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg shadow">
-                Tambah Asset
-            </button>
-        </div>
-    </form>
+    <!-- Action Buttons & Filters -->
+    <div class="mb-4 flex flex-col md:flex-row gap-3 items-center">
+        <!-- Tombol Tambah -->
+    <div class="mb-4 flex gap-2">
+    <a href="<?= base_url('assets/create') ?>" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow">
+        + Tambah Asset
+    </a>
+    <button onclick="toggleModal('importModal')" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg shadow">
+        Import Excel
+    </button>
+    <a href="<?= base_url('assets/template') ?>" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg shadow">
+        Download Template
+    </a>
+</div>
 
-    <!-- Search & Filter -->
-    <form method="get" action="<?= base_url('assets') ?>" class="mb-4 flex flex-col md:flex-row gap-2 items-center">
-       <input type="text" name="keyword" placeholder="Cari Item / No Assets / No GA / Kategori"
-       value="<?= isset($keyword) ? esc($keyword) : '' ?>"
-       class="border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 w-full md:w-1/3">
-
-
-
-        <select name="status" onchange="this.form.submit()" 
+        <!-- Filter Status -->
+        <select id="filterStatus" 
                 class="border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500">
             <option value="">-- Semua Status --</option>
-            <option value="tersedia" <?= ($status == 'tersedia') ? 'selected' : '' ?>>Tersedia</option>
-            <option value="terpakai" <?= ($status == 'terpakai') ? 'selected' : '' ?>>Terpakai</option>
-            <option value="maintenance" <?= ($status == 'maintenance') ? 'selected' : '' ?>>Maintenance</option>
+            <option value="tersedia">Tersedia</option>
+            <option value="terpakai">Terpakai</option>
+            <option value="maintenance">Maintenance</option>
         </select>
 
-        <button type="submit" 
-                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md shadow">
-            Cari
-        </button>
-    </form>
+        <!-- Filter Entitas -->
+        <select id="filterEntitas" 
+                class="border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500">
+            <option value="">-- Semua Entitas --</option>
+            <?php foreach ($entitas as $e): ?>
+                <option value="<?= esc($e['nama']) ?>"><?= esc($e['nama']) ?></option>
+            <?php endforeach; ?>
+        </select>
 
-    <!-- Tabel Data -->
+        <!-- 🔥 Filter Kategori -->
+        <select id="filterKategori" 
+                class="border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500">
+            <option value="">-- Semua Kategori --</option>
+            <?php foreach ($kategori as $k): ?>
+                <option value="<?= esc($k['jenis']) ?>"><?= esc($k['jenis']) ?></option>
+            <?php endforeach; ?>
+        </select>
+    </div>
+
+    <!-- Tabel Assets -->
     <div class="overflow-x-auto bg-white shadow-md rounded-xl">
-        <table class="min-w-full text-sm text-left text-gray-600">
+        <table id="tableAssets" class="min-w-full text-sm text-left text-gray-600">
             <thead class="bg-gray-800 text-white">
                 <tr>
-                    <th class="px-4 py-3">Nama Item</th>
-                    <th class="px-4 py-3">No Assets</th>
-                    <th class="px-4 py-3">No GA</th>
-                    <th class="px-4 py-3">Kategori</th>
-                    <th class="px-4 py-3">Spesifikasi</th>
-                    <th class="px-4 py-3">Kondisi</th>
-                    <th class="px-4 py-3">Status</th>
-                    <th class="px-4 py-3">Aksi</th>
+                    <th>Nama Item</th>
+                    <th>No Assets</th>
+                    <th>No GA</th>
+                    <th>Kategori</th>
+                    <th>Entitas</th>
+                    <th>Spesifikasi</th>
+                    <th>Kondisi</th>
+                    <th>Lokasi</th>
+                    <th>Foto</th>
+                    <th>Status</th>
+                    <th>Aksi</th>
                 </tr>
             </thead>
             <tbody>
-                <?php if(!empty($assets)): ?>
-                    <?php foreach($assets as $a): ?>
-                    <tr class="border-b hover:bg-gray-50">
-                        <td class="px-4 py-3"><?= $a['nama_item'] ?></td>
-                        <td class="px-4 py-3"><?= $a['kode_asset'] ?></td>
-                        <td class="px-4 py-3"><?= $a['kode_ga'] ?></td>
-                        <td class="px-4 py-3"><?= $a['nama_kategori'] ?></td>
-                        <td class="px-4 py-3"><?= $a['spesifikasi'] ?></td>
-                        <td class="px-4 py-3"><?= $a['nama_kondisi'] ?></td>
-                        <td class="px-4 py-3">
-                            <span class="px-2 py-1 rounded-full text-xs font-medium 
-                                <?= $a['status'] === 'tersedia' ? 'bg-green-100 text-green-700' : 
-                                   ($a['status'] === 'terpakai' ? 'bg-yellow-100 text-yellow-700' : 
-                                   'bg-red-100 text-red-700') ?>">
-                                <?= ucfirst($a['status']) ?>
+                <?php foreach ($assets as $a): ?>
+                    <tr>
+                        <td><?= esc($a['nama_item']) ?></td>
+                        <td><?= esc($a['kode_asset']) ?></td>
+                        <td><?= esc($a['kode_ga']) ?></td>
+                        <td><?= esc($a['nama_kategori']) ?></td>
+                        <td><?= esc($a['nama_entitas']) ?></td>
+                        <td><?= esc($a['spesifikasi']) ?></td>
+                        <td><?= esc($a['nama_kondisi']) ?></td>
+                        <td><?= esc($a['nama_lokasi']) ?></td>
+                        <td>
+                            <?php if (!empty($a['foto'])): ?>
+                                <img src="<?= base_url('uploads/'.$a['foto']) ?>" 
+                                     class="h-12 w-12 object-cover rounded">
+                            <?php else: ?>
+                                <span class="text-gray-400 text-xs">-</span>
+                            <?php endif; ?>
+                        </td>
+                        <td>
+                            <?php 
+                                $status = strtolower($a['status'] ?? '');
+                                $badgeClass = match($status) {
+                                    'tersedia'   => 'bg-green-100 text-green-700',
+                                    'terpakai'   => 'bg-red-100 text-red-700',
+                                    'maintenance'=> 'bg-yellow-100 text-yellow-700',
+                                    default      => 'bg-gray-100 text-gray-700',
+                                };
+                            ?>
+                            <span class="px-2 py-1 rounded-full text-xs font-semibold <?= $badgeClass ?>">
+                                <?= ucfirst($status) ?>
                             </span>
                         </td>
-                        <td class="px-4 py-3 flex gap-1">
-                            <a href="<?= base_url('assets/delete/'.$a['id']) ?>" 
-                               onclick="return confirm('Yakin hapus?')"
-                               class="bg-red-600 hover:bg-red-700 text-white py-1 px-3 rounded-lg text-xs shadow">
-                               Hapus
-                            </a>
+                        <td class="flex gap-1">
                             <a href="<?= base_url('assets/edit/'.$a['id']) ?>" 
-                               class="bg-yellow-500 hover:bg-yellow-600 text-white py-1 px-3 rounded-lg text-xs shadow">
-                               Edit
+                               class="bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-1 rounded text-xs">
+                                Edit
+                            </a>
+                            <a href="<?= base_url('assets/delete/'.$a['id']) ?>" 
+                               onclick="return confirm('Yakin hapus?')" 
+                               class="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded text-xs">
+                                Hapus
                             </a>
                         </td>
                     </tr>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <tr>
-                        <td colspan="8" class="px-4 py-6 text-center text-gray-500">Belum ada data</td>
-                    </tr>
-                <?php endif; ?>
+                <?php endforeach; ?>
             </tbody>
         </table>
     </div>
 </div>
+<div id="importModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+  <div class="bg-white p-6 rounded-lg shadow-md w-96">
+    <h3 class="text-lg font-bold mb-4">Import Data Asset</h3>
+    <form action="<?= base_url('assets/import') ?>" method="post" enctype="multipart/form-data">
+      <input type="file" name="file_excel" accept=".xls,.xlsx" required class="mb-3 w-full">
+      <div class="flex justify-end gap-2">
+        <button type="button" onclick="toggleModal('importModal')" class="bg-gray-400 px-4 py-2 rounded">Batal</button>
+        <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">Upload</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+function toggleModal(id) {
+  document.getElementById(id).classList.toggle('hidden');
+}
+</script>
+
+<!-- DataTables -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.tailwind.min.css">
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        var table = $('#tableAssets').DataTable({
+            paging: true,
+            searching: true,
+            ordering: true,
+            info: true,
+            autoWidth: false,
+            language: {
+                search: "Cari:",
+                lengthMenu: "Tampilkan _MENU_ data per halaman",
+                info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                paginate: { previous: "Sebelumnya", next: "Berikutnya" },
+                zeroRecords: "Data tidak ditemukan"
+            }
+        });
+
+        // Custom filter status + entitas + kategori
+        $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+            var statusFilter   = ($('#filterStatus').val() || '').toLowerCase();
+            var entitasFilter  = ($('#filterEntitas').val() || '').toLowerCase();
+            var kategoriFilter = ($('#filterKategori').val() || '').toLowerCase();
+
+            var rowStatus   = ($('<div>').html(data[9] || '').text() || '').trim().toLowerCase();
+            var rowEntitas  = (data[4] || '').trim().toLowerCase();
+            var rowKategori = (data[3] || '').trim().toLowerCase();
+
+            if (
+                (statusFilter === "" || rowStatus === statusFilter) &&
+                (entitasFilter === "" || rowEntitas === entitasFilter) &&
+                (kategoriFilter === "" || rowKategori === kategoriFilter)
+            ) {
+                return true;
+            }
+            return false;
+        });
+
+        // Event trigger filter
+        $('#filterStatus, #filterEntitas, #filterKategori').on('change', function() {
+            table.draw();
+        });
+    });
+</script>
 
 <?= $this->endSection() ?>

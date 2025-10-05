@@ -1,62 +1,115 @@
 <?= $this->extend('layouts/dashboard') ?>
 <?= $this->section('content') ?>
 
-<div class="max-w-4xl mx-auto px-4 py-6">
-    <h2 class="text-2xl font-bold mb-6 text-gray-800">Edit Asset</h2>
+<h2 class="text-2xl font-semibold mb-6">Edit Asset</h2>
 
-    <form action="<?= base_url('assets/update/'.$asset['id']) ?>" method="post" class="bg-white shadow-md rounded-xl p-6">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-                <label class="block mb-1 font-medium">Nama Item</label>
-                <input type="text" name="nama_item" value="<?= $asset['nama_item'] ?>" class="w-full border rounded-lg px-3 py-2">
-            </div>
-            <div>
-                <label class="block mb-1 font-medium">No Asset</label>
-                <input type="text" name="kode_asset" value="<?= $asset['kode_asset'] ?>" class="w-full border rounded-lg px-3 py-2">
-            </div>
-            <div>
-                <label class="block mb-1 font-medium">No GA</label>
-                <input type="text" name="kode_ga" value="<?= $asset['kode_ga'] ?>" class="w-full border rounded-lg px-3 py-2">
-            </div>
-            <div>
-                <label class="block mb-1 font-medium">Spesifikasi</label>
-                <textarea name="spesifikasi" class="w-full border rounded-lg px-3 py-2"><?= $asset['spesifikasi'] ?></textarea>
-            </div>
-            <div>
-                <label class="block mb-1 font-medium">Kategori</label>
-                <select name="kategori_id" class="w-full border rounded-lg px-3 py-2">
-                    <?php foreach($kategori as $k): ?>
-                        <option value="<?= $k['id'] ?>" <?= $k['id'] == $asset['kategori_id'] ? 'selected' : '' ?>>
-                            <?= $k['jenis'] ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-            <div>
-                <label class="block mb-1 font-medium">Kondisi</label>
-                <select name="kondisi_id" class="w-full border rounded-lg px-3 py-2">
-                    <?php foreach($kondisi as $k): ?>
-                        <option value="<?= $k['id'] ?>" <?= $k['id'] == $asset['kondisi_id'] ? 'selected' : '' ?>>
-                            <?= $k['kondisi'] ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-            <div>
-                <label class="block mb-1 font-medium">Status</label>
-                <select name="status" class="w-full border rounded-lg px-3 py-2">
-                    <option value="tersedia" <?= $asset['status'] == 'tersedia' ? 'selected' : '' ?>>Tersedia</option>
-                    <option value="terpakai" <?= $asset['status'] == 'terpakai' ? 'selected' : '' ?>>Terpakai</option>
-                    <option value="maintenance" <?= $asset['status'] == 'maintenance' ? 'selected' : '' ?>>Maintenance</option>
-                </select>
-            </div>
+<form action="<?= base_url('assets/update/'.$asset['id']) ?>" method="post" enctype="multipart/form-data" class="mb-8 bg-white shadow-md rounded-xl p-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Nama Item -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Nama Item</label>
+            <input type="text" name="nama_item" 
+                   class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500" 
+                   value="<?= $asset['nama_item'] ?>" required>
         </div>
+        
+        <!-- No Assets -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">No Assets</label>
+            <input type="text" name="kode_asset" 
+                   class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500" 
+                   value="<?= $asset['kode_asset'] ?>">
+        </div>
+        
+        <!-- No GA -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">No GA</label>
+            <input type="text" name="kode_ga" 
+                   class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500" 
+                   value="<?= $asset['kode_ga'] ?>">
+        </div>
+        
+        <!-- Spesifikasi -->
+        <div class="md:col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Spesifikasi</label>
+            <textarea name="spesifikasi" 
+                      class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"><?= $asset['spesifikasi'] ?></textarea>
+        </div>
+        
+        <!-- Dropdown Kategori -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
+            <select name="kategori_id" 
+                    class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500" required>
+                <option value="">-- Pilih Kategori --</option>
+                <?php foreach($kategori as $k): ?>
+                    <option value="<?= $k['id'] ?>" <?= ($asset['kategori_id'] == $k['id']) ? 'selected' : '' ?>>
+                        <?= $k['jenis'] ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+        
+        <!-- Dropdown Kondisi -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Kondisi</label>
+            <select name="kondisi_id" 
+                    class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500" required>
+                <option value="">-- Pilih Kondisi --</option>
+                <?php foreach($kondisi as $k): ?>
+                    <option value="<?= $k['id'] ?>" <?= ($asset['kondisi_id'] == $k['id']) ? 'selected' : '' ?>>
+                        <?= $k['kondisi'] ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+        
+        <!-- Dropdown Entitas -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Entitas</label>
+            <select name="entitas_id" 
+                    class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500" required>
+                <option value="">-- Pilih Entitas --</option>
+                <?php foreach($entitas as $e): ?>
+                    <option value="<?= $e['id'] ?>" <?= ($asset['entitas_id'] == $e['id']) ? 'selected' : '' ?>>
+                        <?= $e['nama'] ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+        
+        <!-- Upload Foto -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Foto</label>
+            <input type="file" name="foto" 
+                   class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500">
+            <?php if($asset['foto']): ?>
+                <img src="<?= base_url('uploads/'.$asset['foto']) ?>" class="mt-2 w-32 h-32 object-cover rounded" alt="Foto Asset">
+            <?php endif; ?>
+        </div>
+        
+        <!-- Dropdown Lokasi -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Lokasi</label>
+            <select name="lokasi_id" 
+                    class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500" required>
+                <option value="">-- Pilih Lokasi --</option>
+                <?php foreach($lokasi as $l): ?>
+                    <option value="<?= $l['id'] ?>" <?= ($asset['lokasi_id'] == $l['id']) ? 'selected' : '' ?>>
+                        <?= $l['lokasi'] ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+    </div>
 
-        <div class="mt-6 flex gap-2">
-            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">Update</button>
-            <a href="<?= base_url('assets') ?>" class="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded-lg">Batal</a>
-        </div>
-    </form>
-</div>
+    <!-- Tombol Submit -->
+    <div class="mt-6 flex justify-end">
+        <button type="submit" 
+                class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg shadow">
+            Update Asset
+        </button>
+    </div>
+</form>
 
 <?= $this->endSection() ?>

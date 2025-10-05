@@ -1,0 +1,29 @@
+{
+  "name": "it-maintenance",
+  "version": "1.0.0",
+  "description": "## What is CodeIgniter?",
+  "main": "server.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/opan27/it-assets.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/opan27/it-assets/issues"
+  },
+  "homepage": "https://github.com/opan27/it-assets#readme",
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "express": "^5.1.0",
+    "socket.io": "^4.8.1"
+  }
+}

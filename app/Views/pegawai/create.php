@@ -9,7 +9,15 @@
     <input type="text" name="department" placeholder="Department" class="w-full p-2 border rounded">
     <input type="text" name="divisi" placeholder="Divisi" class="w-full p-2 border rounded">
 
+    <select name="entitas_id" class="w-full p-2 border rounded" required>
+        <option value="">-- Pilih Entitas --</option>
+        <?php foreach($entitas as $e): ?>
+            <option value="<?= $e['id'] ?>"><?= $e['nama'] ?></option>
+        <?php endforeach; ?>
+    </select>
+
     <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Simpan</button>
 </form>
+
 
 <?= $this->endSection() ?>

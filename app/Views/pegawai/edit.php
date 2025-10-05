@@ -9,7 +9,16 @@
     <input type="text" name="department" value="<?= $pegawai['department'] ?>" class="w-full p-2 border rounded">
     <input type="text" name="divisi" value="<?= $pegawai['divisi'] ?>" class="w-full p-2 border rounded">
 
+    <select name="entitas_id" class="w-full p-2 border rounded" required>
+        <?php foreach($entitas as $e): ?>
+            <option value="<?= $e['id'] ?>" <?= $pegawai['entitas_id'] == $e['id'] ? 'selected' : '' ?>>
+                <?= $e['nama'] ?>
+            </option>
+        <?php endforeach; ?>
+    </select>
+
     <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded">Update</button>
 </form>
+
 
 <?= $this->endSection() ?>
